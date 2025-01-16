@@ -2,7 +2,7 @@ name: Daily Commit Check
 
 on:
   schedule:
-    - cron: '0 20 * * *' # Runs at 8 PM (20:00) UTC every day
+    - cron: '0 2 * * *' # Runs at (2:00) UTC every day
 
 jobs:
   check-commits:
