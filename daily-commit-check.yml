@@ -1,0 +1,39 @@
+name: Daily Commit Check
+
+on:
+  schedule:
+    - cron: '0 20 * * *' # Runs at 8 PM (20:00) UTC every day
+
+jobs:
+  check-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
+      - name: Check for daily commit
+        id: commit-check
+        run: |
+          LAST_COMMIT_DATE=$(git log -1 --format=%cd --date=short)
+          TODAY=$(date +%Y-%m-%d)
+          if [ "$LAST_COMMIT_DATE" = "$TODAY" ]; then
+            echo "::set-output name=committed::true"
+          else
+            echo "::set-output name=committed::false"
+          fi
+
+      - name: Send mail if no commit today
+        if: steps.commit-check.outputs.committed == 'false'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.EMAIL_USER}}
+          password: ${{secrets.EMAIL_PASSWORD}}
+          subject: No Commit Today
+          body: No commit was detected for today in your repository.
+          to: ${{secrets.EMAIL_RECIPIENT}}
+          from: Your GitHub Actions  # Change this to your preferred from email name
+          secure: true
