@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.EMAIL_USER }}
           password: ${{ secrets.GOOGLE_APP_PASSWORD }}
           subject: No Commit Today
-          body: No commit was detected for today by the user <USERNAME>.
+          body: No commit was detected for today by the user jeromevde.
           to: ${{ secrets.EMAIL_USER }}
           from: Your GitHub Actions
           secure: true
