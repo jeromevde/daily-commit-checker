@@ -2,46 +2,26 @@ name: Daily User Commit Check
 
 on:
   schedule:
-    - cron: '35 14 * * *' # Runs at 14:20 UTC daily
+    - cron: '00 20 * * *' # Runs at 20:00 UTC daily
 
 jobs:
   check-user-commits:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code # to ensure access to the send_mail_if_no_commit
+        uses: actions/checkout@v3
+
+      - name: Install mailutils
+        run: sudo apt-get update && sudo apt-get install -y mailutils
+
+      - name: Set script permissions
+        run: chmod +x ./send_mail_if_no_commit.sh
+
       - name: Check for user activity
         id: user-activity
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Automatically available in Actions
-          TARGET_USER: jeromevde # Replace with the target GitHub username
+          GMAIL_TOKEN: ${{ secrets.GMAIL_TOKEN }}
+          GITHUB_USER: jeromevde
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
         run: |
-          # Get the current date
-          TODAY=$(date +%Y-%m-%d)
-
-          # Fetch the last 100 events for the user
-          EVENTS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/users/${TARGET_USER}/events?per_page=100")
-
-          # Check for commit events today
-          COMMIT_FOUND=$(echo "$EVENTS" | jq -r --arg TODAY "$TODAY" '
-            .[] | select(.type == "PushEvent") | 
-            .created_at | startswith($TODAY)')
-
-          if [ "$COMMIT_FOUND" = "true" ]; then
-            echo "committed=true" >> $GITHUB_ENV
-          else
-            echo "committed=false" >> $GITHUB_ENV
-          fi
-
-      - name: Send mail if no commit today
-        if: env.committed == 'false'
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.EMAIL_USER }}
-          password: ${{ secrets.GOOGLE_APP_PASSWORD }}
-          subject: No Commit Today
-          body: No commit was detected for today by the user jeromevde.
-          to: ${{ secrets.EMAIL_USER }}
-          from: Your GitHub Actions
-          secure: true
+          ./send_mail_if_no_commit.sh
