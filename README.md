@@ -23,3 +23,15 @@ at the following adderess after substituting your username:
 ```
 [YOUR_REPO_LINK]/settings/secrets/actions
 ```
+
+## Run github actions locally with act
+
+```
+brew install act
+```
+```
+act -l
+```
+```
+act -j ...
+```
