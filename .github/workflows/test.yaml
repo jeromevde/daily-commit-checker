@@ -17,8 +17,6 @@ jobs:
         run: |
           # Enable verbose logging for curl
           set -x
-          echo "test"
-          echo $GMAIL_TOKEN
           # Export environment variables if needed
           export TARGET_MAIL="$TARGET_MAIL"
           export GMAIL_TOKEN="$GMAIL_TOKEN"
