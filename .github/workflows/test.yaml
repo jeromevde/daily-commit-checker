@@ -1,0 +1,32 @@
+name: Send Email on Commit
+
+on:
+  push:
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Send Email
+        env:
+          TARGET_MAIL: ${{ secrets.TARGET_MAIL }}
+          GMAIL_TOKEN: ${{ secrets.GMAIL_TOKEN }}
+        run: |
+          # Enable verbose logging for curl
+          set -x
+
+          # Export environment variables if needed
+          export TARGET_MAIL="$TARGET_MAIL"
+          export GMAIL_TOKEN="$GMAIL_TOKEN"
+
+          # Execute curl command with verbose output
+          curl --verbose \
+            --url 'smtps://smtp.gmail.com:465' \
+            --ssl-reqd \
+            --mail-from "$TARGET_MAIL" \
+            --mail-rcpt "$TARGET_MAIL" \
+            --upload-file <(echo -e "Subject: test test") \
+            --user "$TARGET_MAIL:$GMAIL_TOKEN"
