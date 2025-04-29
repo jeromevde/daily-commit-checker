@@ -5,7 +5,6 @@ echo "[INFO] Using email: $EMAIL_USER"
 
 EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=10")
 
-echo "[DEBUG] GitHub events response: $EVENTS"
 echo ""
 
 COMMIT_FOUND=$(echo "$EVENTS" | jq -r --arg TODAY "$TODAY" '
@@ -16,16 +15,12 @@ if [ "$COMMIT_FOUND" = "true" ]; then
     echo "Email not sent"
 else
     echo "[INFO] Sending email notification via Gmail SMTP for user $GITHUB_USER to/from $EMAIL_USER"
-    CURL_CMD=(curl --url 'smtps://smtp.gmail.com:465' --ssl-reqd \
+    RESPONSE=$(curl --url 'smtps://smtp.gmail.com:465' --ssl-reqd \
         --mail-from "$EMAIL_USER" \
         --mail-rcpt "$EMAIL_USER" \
         --upload-file <(echo -e "Subject: Daily Commit Checker\n\n$GITHUB_USER did not commit to a public repo today.") \
-        --user "$EMAIL_USER:$GMAIL_TOKEN")
-    echo "[DEBUG] Running: ${CURL_CMD[*]}"
-    # shellcheck disable=SC2294
-    RESPONSE=$(eval "${CURL_CMD[*]}" 2>&1)
+        --user "$EMAIL_USER:$GMAIL_TOKEN" 2>&1)
     CURL_EXIT_CODE=$?
-    echo "[DEBUG] curl response: $RESPONSE"
     if [ $CURL_EXIT_CODE -eq 0 ]; then
         echo "[INFO] Email sent successfully"
     else
