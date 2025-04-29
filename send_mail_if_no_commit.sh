@@ -13,9 +13,9 @@ if [ "$COMMIT_FOUND" = "true" ]; then
     echo "Email not sent"
 else
     curl --url 'smtps://smtp.gmail.com:465' --ssl-reqd \
-        --mail-from $TARGET_MAIL \
-        --mail-rcpt $TARGET_MAIL \
+        --mail-from $EMAIL_USER \
+        --mail-rcpt $EMAIL_USER \
         --upload-file <(echo -e "Subject: Daily Commit Checker\n\n$GITHUB_USER did not commit to a public repo today.") \
-        --user "$TARGET_MAIL:$GMAIL_TOKEN"
+        --user "$EMAIL_USER:$GMAIL_TOKEN"
     echo "Email sent"
 fi

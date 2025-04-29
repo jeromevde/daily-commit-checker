@@ -12,20 +12,20 @@ jobs:
 
       - name: Send Email
         env:
-          TARGET_MAIL: ${{ secrets.TARGET_MAIL }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
           GMAIL_TOKEN: ${{ secrets.GMAIL_TOKEN }}
         run: |
           # Enable verbose logging for curl
           set -x
           # Export environment variables if needed
-          export TARGET_MAIL="$TARGET_MAIL"
+          export EMAIL_USER="$EMAIL_USER"
           export GMAIL_TOKEN="$GMAIL_TOKEN"
 
           # Execute curl command with verbose output
           curl --verbose \
             --url 'smtps://smtp.gmail.com:465' \
             --ssl-reqd \
-            --mail-from "$TARGET_MAIL" \
-            --mail-rcpt "$TARGET_MAIL" \
+            --mail-from "$EMAIL_USER" \
+            --mail-rcpt "$EMAIL_USER" \
             --upload-file <(echo -e "Subject: test test") \
-            --user "$TARGET_MAIL:$GMAIL_TOKEN"
+            --user "$EMAIL_USER:$GMAIL_TOKEN"
