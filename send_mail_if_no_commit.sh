@@ -12,6 +12,8 @@ COMMIT_FOUND=$(echo "$EVENTS" | jq -r --arg TODAY "$TODAY" '
 .[] | select(.type == "PushEvent") | 
 .created_at | startswith($TODAY)')
 
+echo $COMMIT_FOUND
+
 if [ "$COMMIT_FOUND" = "true" ]; then
     echo "Email not sent"
 else
