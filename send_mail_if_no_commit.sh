@@ -8,9 +8,8 @@ EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=10
 echo $TODAY
 echo $EVENTS
 
-COMMIT_FOUND=$(echo "$EVENTS" | jq -r --arg TODAY "$TODAY" '
-.[] | select(.type == "PushEvent") | 
-.created_at | startswith($TODAY)')
+COMMIT_FOUND=$(echo "$EVENTS" | jq --arg TODAY "$TODAY" '
+any(.[]; .type == "PushEvent" and (.created_at | startswith($TODAY)))')
 
 echo $COMMIT_FOUND
 
