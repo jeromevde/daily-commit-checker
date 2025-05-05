@@ -3,6 +3,8 @@ name: Daily User Commit Check
 on:
   schedule:
     - cron: '00 18 * * *' # Runs at 02:00 UTC daily
+  push:
+    branches: ["main"]
 
 jobs:
   check-user-commits:
@@ -24,6 +26,4 @@ jobs:
           GITHUB_USER: jeromevde
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
         run: |
-          echo "[GH-ACTION] Running as GITHUB_USER: $GITHUB_USER"
-          echo "[GH-ACTION] Sending email using EMAIL_USER: $EMAIL_USER"
           ./send_mail_if_no_commit.sh
