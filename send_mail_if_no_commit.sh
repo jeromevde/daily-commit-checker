@@ -5,6 +5,7 @@ echo "[INFO] Using email: $EMAIL_USER"
 
 EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=10")
 
+echo $TODAY
 echo $EVENTS
 
 COMMIT_FOUND=$(echo "$EVENTS" | jq -r --arg TODAY "$TODAY" '
