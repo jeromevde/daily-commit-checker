@@ -3,15 +3,18 @@ TODAY=$(date +%Y-%m-%d)
 echo "[INFO] Checking commits for GitHub user: $GITHUB_USER on $TODAY"
 echo "[INFO] Using email: $EMAIL_USER"
 
-EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=5")
- 
-echo "date of today: $TODAY"
-echo $EVENTS
+# Check recent commits directly from repositories
+echo "[INFO] Checking recent commits from repositories..."
+RECENT_COMMITS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/repos?per_page=10&sort=pushed" | jq -r '.[] | select(.pushed_at | startswith("'$TODAY'")) | .full_name')
 
-COMMIT_FOUND=$(echo "$EVENTS" | jq --arg TODAY "$TODAY" '
-any(.[]; .type == "PushEvent" and (.created_at | split("T")[0] == $TODAY))')
+if [ -n "$RECENT_COMMITS" ]; then
+    echo "[DEBUG] Found repositories with commits today: $RECENT_COMMITS"
+    COMMIT_FOUND="true"
+else
+    echo "[DEBUG] No repositories found with commits today"
+    COMMIT_FOUND="false"
+fi
 
-echo "Commit found ? $COMMIT_FOUND"
 
 if [ "$COMMIT_FOUND" = "true" ]; then
     echo "Email not sent"
