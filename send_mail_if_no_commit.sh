@@ -20,7 +20,7 @@ else
     RESPONSE=$(curl --url 'smtps://smtp.gmail.com:465' --ssl-reqd \
         --mail-from "$EMAIL_USER" \
         --mail-rcpt "$EMAIL_USER" \
-        --upload-file <(echo -e "Subject: Daily Commit Checker\n\n$GITHUB_USER did not commit to a public repo today.") \
+        --upload-file <(echo -e "Subject: Commit every day \n\n$GITHUB_USER did not commit to a public repo today") \
         --user "$EMAIL_USER:$GMAIL_TOKEN" 2>&1)
     CURL_EXIT_CODE=$?
     if [ $CURL_EXIT_CODE -eq 0 ]; then
