@@ -3,7 +3,7 @@ TODAY=$(date +%Y-%m-%d)
 echo "[INFO] Checking commits for GitHub user: $GITHUB_USER on $TODAY"
 echo "[INFO] Using email: $EMAIL_USER"
 
-EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=30")
+EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=5")
  
 echo "date of today: $TODAY"
 echo $EVENTS
