@@ -4,7 +4,7 @@ echo "[INFO] Checking commits for GitHub user: $GITHUB_USER on $TODAY"
 echo "[INFO] Using email: $EMAIL_USER"
 
 EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=10")
-
+ 
 echo $TODAY
 echo $EVENTS
 
