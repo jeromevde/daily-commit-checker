@@ -3,15 +3,15 @@ TODAY=$(date +%Y-%m-%d)
 echo "[INFO] Checking commits for GitHub user: $GITHUB_USER on $TODAY"
 echo "[INFO] Using email: $EMAIL_USER"
 
-EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=10")
+EVENTS=$(curl -s "https://api.github.com/users/${GITHUB_USER}/events?per_page=30")
  
-echo $TODAY
+echo "date of today: $TODAY"
 echo $EVENTS
 
 COMMIT_FOUND=$(echo "$EVENTS" | jq --arg TODAY "$TODAY" '
-any(.[]; .type == "PushEvent" and (.created_at | startswith($TODAY)))')
+any(.[]; .type == "PushEvent" and (.created_at | split("T")[0] == $TODAY))')
 
-echo $COMMIT_FOUND
+echo "Commit found ? $COMMIT_FOUND"
 
 if [ "$COMMIT_FOUND" = "true" ]; then
     echo "Email not sent"
